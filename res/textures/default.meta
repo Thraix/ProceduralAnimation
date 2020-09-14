@@ -1,0 +1,3 @@
+[texture2d]
+filepath=res/textures/default.png
+filter=nearest
