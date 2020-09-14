@@ -20,8 +20,6 @@ class Application : public App
   Cam cam;
   CamController camController = CamController{cam};
 
-  Vec3<float> rayPos;
-
   public:
     Application()
       : App{"", 720, 480}, cam{Mat4::Perspective(Window::GetAspect(), 90, 0.001, 1000.0)}
@@ -74,12 +72,6 @@ class Application : public App
       plane->Unbind();
       texture->Disable();
 
-      shader->SetUniformBoolean("uHasTexture", false);
-      shader->SetUniformMat4("uTransformationMatrix", Mat4::Translate(rayPos));
-      sphere->Bind();
-      sphere->Render();
-      sphere->Unbind();
-
       spider->Render(cam);
     }
 
@@ -90,10 +82,6 @@ class Application : public App
     void Update(float timeElapsed) override
     {
       camController.Update(timeElapsed);
-      Vec3<float> near, dir;
-      Line line = cam.GetScreenToWorldCoordinate(Input::GetMousePos());
-      Plane plane;
-      rayPos = Plane{}.LineIntersection(line);
       spider->Update(timeElapsed);
     }
 

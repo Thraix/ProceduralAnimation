@@ -3,17 +3,13 @@
 using namespace Greet;
 
 Spider::Spider(const Vec3<float>& position)
-  : position{position}
+  : position{position}, renderer{new DebugRenderer{}}
 {
-  body = Ref<Mesh>{new Mesh{MeshFactory::Cube(0, 0, 0, 1.0f, 1.0f, 1.0f)}};
-  legPart = Ref<Mesh>{new Mesh{MeshFactory::Cube(0, 0, 0, 1.0f, 1.0f, 1.0f)}};
-  shader = Shader::FromFile("res/shaders/shader3d.glsl");
-
   for(int i = 0; i < 8; i++)
   {
     float xPos = (i / 4) - 0.5f;
     float zPos = (i % 4) / 3.0f - 0.5f;
-    legs.push_back(SpiderLeg(legPart, shader, position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 3, -1.0, zPos * 3}, position + Vec3<float>{xPos * 2, 1.0, zPos * 2}));
+    legs.push_back(SpiderLeg(position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 3, -1.0, zPos * 3}, position + Vec3<float>{xPos * 4, 1.0, zPos * 4}, renderer));
   }
 }
 
@@ -24,9 +20,7 @@ Spider::Spider()
 
 void Spider::Render(const Cam& cam)
 {
-  shader->Enable();
-  cam.BindShaderMatrices(shader);
-  shader->SetUniformBoolean("uHasTexture", false);
+  renderer->Begin(cam);
 
   Mat4 transform = Mat4::Translate(position);
   for(auto&& leg : legs)
@@ -34,12 +28,13 @@ void Spider::Render(const Cam& cam)
     leg.Render();
     leg.RenderDebug();
   }
-  shader->SetUniformMat4("uTransformationMatrix",  transform * Mat4::Scale({1, 0.4f, 1}));
-  shader->SetUniform3f("uColor", Greet::Vec3<float>{1.0f, 1.0f, 1.0f});
-  body->Bind();
-  body->Render();
-  body->Unbind();
-  shader->Disable();
+  renderer->Cube(position, {1, 0.4f, 1.0f}, Color{1.0f, 1.0f, 1.0f});
+  renderer->Cube(position + Vec3<float>{0, 0.2f, 0.5f}, {0.4f, 0.4f, 0.4f}, Color{1.0f, 1.0f, 1.0f});
+  renderer->Point(position + Vec3<float>{-0.1f, 0.3f, 0.7f}, 0.05f, Color{1.0f, 1.0f, 1.0f});
+  renderer->Point(position + Vec3<float>{ 0.1f, 0.3f, 0.7f}, 0.05f, Color{1.0f, 1.0f, 1.0f});
+  renderer->Line(Line{position + Vec3<float>{ 0.1f, 0.2f, 0.7f}, Vec3<float>{-0.05f, -0.05f, 0.1f}}, 0.05f, Color{1.0f, 1.0f, 1.0f});
+  renderer->Line(Line{position + Vec3<float>{-0.1f, 0.2f, 0.7f}, Vec3<float>{0.05f, -0.05f, 0.1f}}, 0.05f, Color{1.0f, 1.0f, 1.0f});
+  renderer->End();
 }
 
 void Spider::Update(float timeElapsed)

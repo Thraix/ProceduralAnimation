@@ -14,7 +14,7 @@ out vec3 vToCameraVector;
 uniform mat4 uTransformationMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
-uniform vec3 uLightPosition = vec3(0.0, 10.0, -10.0);
+uniform vec3 uLightPosition = vec3(10.0, 10.0, 10.0);
 uniform vec3 uColor = vec3(1,1,1);
 uniform int  uTextureRepeatCount = 1;
 
