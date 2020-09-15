@@ -9,7 +9,7 @@ Spider::Spider(const Vec3<float>& position)
   {
     float xPos = (i / 4) - 0.5f;
     float zPos = (i % 4) / 3.0f - 0.5f;
-    legs.push_back(SpiderLeg(position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 3, -1.0, zPos * 3}, position + Vec3<float>{xPos * 4, 1.0, zPos * 4}, renderer));
+    legs.push_back(SpiderLeg(position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 2, -1.0, zPos * 2}, position + Vec3<float>{xPos * 4, 1.0, zPos * 4}, renderer));
   }
 }
 
@@ -39,6 +39,7 @@ void Spider::Render(const Cam& cam)
 
 void Spider::Update(float timeElapsed)
 {
+  Vec3<float> oldPos = position;
   float dist = 4.0f * timeElapsed;
   if(Input::IsKeyDown(GREET_KEY_H))
     position.x += dist;
@@ -57,6 +58,7 @@ void Spider::UpdateJointPositions()
   {
     float xPos = (i / 4) - 0.5f;
     float zPos = (i % 4) / 3.0f - 0.5f;
-    legs[i].SetTargetPos(position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 3, 1.0, zPos * 3});
+    legs[i].BodyMoved(position + Vec3<float>{xPos, 0, zPos}, position + Vec3<float>{xPos * 3, -1.0, zPos * 3}, position + Vec3<float>{xPos * 2.5f, 1.5f, zPos * 2.5f});
+    legs[i].Update();
   }
 }

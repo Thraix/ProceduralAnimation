@@ -41,6 +41,15 @@ class DebugRenderer
       pointMesh->Unbind();
     }
 
+    void Circle(const Greet::Vec3<float>& pos, const Greet::Plane& plane, float radius, const Greet::Color& color)
+    {
+      shader->SetUniform3f("uColor", {color.r, color.g, color.b});
+      shader->SetUniformMat4("uTransformationMatrix", Greet::Mat4::AlignAxis(pos, plane.normal, {0, 1, 0}) * Greet::Mat4::Scale({radius, 0, radius}));
+      pointMesh->Bind();
+      pointMesh->Render();
+      pointMesh->Unbind();
+    }
+
     void Plane(const Greet::Vec3<float>& pos, const Greet::Plane& plane, float size, const Greet::Color& color)
     {
       shader->SetUniform3f("uColor", {color.r, color.g, color.b});
